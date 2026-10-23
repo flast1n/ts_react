@@ -14,7 +14,12 @@ export const AddTask = ({task, onAdd}: TaskProps) => {
         e.preventDefault()
         if(!title.trim()) return;
 
-        onAdd({ ...task, title: title.trim(), priority, category })
+        onAdd({
+            ...task, 
+            title: title.trim(), 
+            priority, 
+            category });
+        setTitle("");
     }
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -34,20 +39,19 @@ export const AddTask = ({task, onAdd}: TaskProps) => {
 
     return (<form className="card" onSubmit={handleSubmit}>
         <div className="form-group">
-            <input type="text" placeholder={"Введіть назву товара: "} value={title}
+            <input type="text" placeholder="Введіть назву товара: " value={title}
                 onChange={handleChange}
             />
             <select value={priority} onChange={handlePriorityChange}>
-                <option value="low">{"Low"}</option>
-                <option value="medium">{"Medium"}</option>
-                <option value="high">{"High"}</option>
+                <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
             </select>
             <select value={category} onChange={handleCategoryChange}>
-                <option value="Work">{"Work"}</option>
-                <option value="Personal">{"Personal"}</option>
-                <option value="Study">{"Study"}</option>
+                <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Study">Study</option>
             </select>
         </div>
-
     </form>)
 }
