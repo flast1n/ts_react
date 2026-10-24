@@ -2,7 +2,7 @@ import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import type { Task } from "./App";
 
 interface TaskItemProps {
-    task: Omit<Task, "isCompleted"> & { isCompleted: false };
+    task: Task;
     onDelete: (id: number) => void;
     onToggle: (id: number) => void;
     onEdit: (task: Task) => void;
