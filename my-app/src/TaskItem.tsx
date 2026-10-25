@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { Task } from "./App";
 
 interface TaskItemProps {
@@ -14,7 +14,7 @@ export const TaskItem = ({task, onDelete, onToggle, onEdit}: TaskItemProps) => {
     const [editPriority, setEditPriority] = useState(task.priority)
     const [editCategory, setEditCategory] = useState(task.category)
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!editTitle.trim()) return;
 

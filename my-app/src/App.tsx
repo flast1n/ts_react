@@ -11,22 +11,23 @@ export type Task = {
 }
 
 export const App = () => {
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: 1, title: "Вивчити React Context", priority: "high", category: "Study", isCompleted: false },
     { id: 2, title: "Вивчити Git", priority: "medium", category: "Study", isCompleted: false }
   ]);
+  const [search, setSearch] = useState("")
   const [filters, setFilters] = useState("all");
   const [sorts, setSorts] = useState("default");
 
-  const handleAddTask = (newTask) => {
+  const handleAddTask = (newTask: Omit<Task, "id">) => {
     setTasks([...tasks, { id: Date.now(), ...newTask }]);
   };
 
-  const handleDeleteTask = (id) => {
+  const handleDeleteTask = (id: number) => {
     setTasks(tasks.filter(item => item.id !== id));
   };
 
-  const handleToggleTask = (id) => {
+  const handleToggleTask = (id: number) => {
     setTasks(tasks.map(item => { 
       if (item.id === id) {
         return { ...item, isCompleted: !item.isCompleted };
@@ -35,11 +36,24 @@ export const App = () => {
     }));
   };
 
-  const handleUpdateTask = (updatedTask) => {
+  const handleUpdateTask = (updatedTask: Task) => {
     setTasks(tasks.map(item => 
       item.id === updatedTask.id ? updatedTask : item
-    ))
-  }
+    ));
+  };
+
+  const filteredTasks = tasks
+    .filter(item => item.title.toLowerCase().includes(search.toLowerCase()))
+    .filter(item => {
+      if(filters === "active") return !item.isCompleted;
+      if(filters === "completed") return item.isCompleted;
+      if(filters === "high") return item.priority === "high";
+      return true;
+    })
+    .sort((a, b) => {
+      if(sorts === "alphabet") return a.title.localeCompare(b.title);
+      return 0;
+    });
 
   return (<div className="app">
         <header className="header">
@@ -49,15 +63,15 @@ export const App = () => {
         <div>
           <p className="color" style={{ marginBottom: "1rem" }}>Всього завдань: {tasks.length}</p>
           <TaskList 
-            tasks={tasks} 
+            tasks={filteredTasks} 
             onDelete={handleDeleteTask} 
             onToggle={handleToggleTask} 
             onEdit={handleUpdateTask} 
           />
         </div>
         <aside>
-          <AddTask tasks={tasks} onAdd={handleAddTask} />
+          <AddTask onAdd={handleAddTask} />
         </aside>
       </main>
   </div>)
-}
+};
