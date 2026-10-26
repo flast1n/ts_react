@@ -1,4 +1,5 @@
 import type { Task } from "./App";
+import { useLanguage } from "./LanguageContext";
 import { TaskItem } from "./TaskItem";
 
 interface TaskListProps {
@@ -9,7 +10,8 @@ interface TaskListProps {
 }
 
 export const TaskList = ({ tasks, onDelete, onToggle, onEdit }: TaskListProps) => {
-  if (tasks.length === 0) return <p>Тут поки нічого немає</p>;
+  const {t} = useLanguage();
+  if (tasks.length === 0) return <p>{t.noTasks}</p>;
 
   return (
     <div className="task-list">

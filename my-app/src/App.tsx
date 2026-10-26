@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { AddTask } from "./AddTask";
 import { TaskList } from "./TaskList";
+import { useLanguage } from "./LanguageContext";
+import { useTheme } from "./ThemeContext";
+import { LanguageToggle } from "./LanguageToggle";
+import { ThemeToggle } from "./ThemeToggle";
+import { useLocalStorage } from "./UseLocalStorage";
 
 export type Task = {
   id: number;
@@ -11,13 +16,15 @@ export type Task = {
 }
 
 export const App = () => {
-  const [tasks, setTasks] = useState<Task[]>([
+  const [tasks, setTasks] = useLocalStorage<Task[]>("my_task", [
     { id: 1, title: "Вивчити React Context", priority: "high", category: "Study", isCompleted: false },
     { id: 2, title: "Вивчити Git", priority: "medium", category: "Study", isCompleted: false }
   ]);
   const [search, setSearch] = useState("")
   const [filters, setFilters] = useState("all");
   const [sorts, setSorts] = useState("default");
+  const {t} = useLanguage();
+  const {theme} = useTheme();
 
   const handleAddTask = (newTask: Omit<Task, "id">) => {
     setTasks([...tasks, { id: Date.now(), ...newTask }]);
@@ -55,13 +62,17 @@ export const App = () => {
       return 0;
     });
 
-  return (<div className="app">
+  return (<div className={`app ${theme}`}>
         <header className="header">
           <h1 className="color">Smart Task Tracker</h1>
+          <div className="header-controls">
+            <LanguageToggle />
+            <ThemeToggle />
+        </div>
         </header>
         <main className="main-layout">
         <div>
-          <p className="color" style={{ marginBottom: "1rem" }}>Всього завдань: {tasks.length}</p>
+          <p className="color" style={{ marginBottom: "1rem" }}>{t.totalTasks} {tasks.length}</p>
           <TaskList 
             tasks={filteredTasks} 
             onDelete={handleDeleteTask} 

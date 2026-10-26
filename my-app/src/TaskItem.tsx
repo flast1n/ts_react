@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { Task } from "./App";
+import { useLanguage } from "./LanguageContext";
 
 interface TaskItemProps {
     task: Task;
@@ -9,10 +10,11 @@ interface TaskItemProps {
 }
 
 export const TaskItem = ({task, onDelete, onToggle, onEdit}: TaskItemProps) => {
-    const [isEditing, setIsEditing] = useState(false)
-    const [editTitle, setEditTitle] = useState(task.title)
-    const [editPriority, setEditPriority] = useState(task.priority)
-    const [editCategory, setEditCategory] = useState(task.category)
+    const [isEditing, setIsEditing] = useState(false);
+    const [editTitle, setEditTitle] = useState(task.title);
+    const [editPriority, setEditPriority] = useState(task.priority);
+    const [editCategory, setEditCategory] = useState(task.category);
+    const {t} = useLanguage();
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -49,17 +51,17 @@ export const TaskItem = ({task, onDelete, onToggle, onEdit}: TaskItemProps) => {
             <form className="task-edit-form" onSubmit={handleSubmit}>
                 <input type="text" value={editTitle} onChange={(e: ChangeEvent<HTMLInputElement>) => setEditTitle(e.target.value)} />
                 <select value={editPriority} onChange={(e: ChangeEvent<HTMLSelectElement>) => setEditPriority(e.target.value as Task["priority"])}>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">{t.easyDifficulty}</option>
+                    <option value="medium">{t.mediumDifficulty}</option>
+                    <option value="high">{t.highDifficulty}</option>
                 </select>
                 <select value={editCategory} onChange={(e: ChangeEvent<HTMLSelectElement>) => setEditCategory(e.target.value as Task["category"])}>
-                    <option value="Work">Work</option>
-                    <option value="Personal">Personal</option>
-                    <option value="Study">Study</option>
+                    <option value="Work">{t.workCategory}</option>
+                    <option value="Personal">{t.personalCategory}</option>
+                    <option value="Study">{t.studyCategory}</option>
                 </select>
-                <button className="btn btn-primary" type="submit">Зберегти</button>
-                <button className="btn btn-outline" type="button" onClick={() => setIsEditing(false)}>Скасувати</button>
+                <button className="btn btn-primary" type="submit">{t.saveButton}</button>
+                <button className="btn btn-outline" type="button" onClick={() => setIsEditing(false)}>{t.cancelButton}</button>
             </form>
         )}
     </div>)
