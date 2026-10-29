@@ -6,7 +6,11 @@ import { useTheme } from "./ThemeContext";
 import { LanguageToggle } from "./LanguageToggle";
 import { ThemeToggle } from "./ThemeToggle";
 import { useLocalStorage } from "./UseLocalStorage";
+import { TaskStats } from "./TaskStats";
+import { TaskFilters } from "./TaskFilters";
 
+export type FilterType = "all" | "active" | "completed" | "high";
+export type SortType = "default" | "alphabet" | "priority";
 export type Task = {
   id: number;
   title: string;
@@ -21,8 +25,8 @@ export const App = () => {
     { id: 2, title: "Вивчити Git", priority: "medium", category: "Study", isCompleted: false }
   ]);
   const [search, setSearch] = useState("")
-  const [filters, setFilters] = useState("all");
-  const [sorts, setSorts] = useState("default");
+  const [filter, setFilters] = useState<FilterType>("all");
+  const [sort, setSorts] = useState<SortType>("default");
   const {t} = useLanguage();
   const {theme} = useTheme();
 
@@ -49,16 +53,19 @@ export const App = () => {
     ));
   };
 
+  const priorityWeight: Record<Task["priority"], number> = {high: 3, medium: 2, low: 1};
+
   const filteredTasks = tasks
     .filter(item => item.title.toLowerCase().includes(search.toLowerCase()))
     .filter(item => {
-      if(filters === "active") return !item.isCompleted;
-      if(filters === "completed") return item.isCompleted;
-      if(filters === "high") return item.priority === "high";
+      if(filter === "active") return !item.isCompleted;
+      if(filter === "completed") return item.isCompleted;
+      if(filter === "high") return item.priority === "high";
       return true;
     })
     .sort((a, b) => {
-      if(sorts === "alphabet") return a.title.localeCompare(b.title);
+      if(sort === "alphabet") return a.title.localeCompare(b.title);
+      if(sort === "priority") return priorityWeight[b.priority] - priorityWeight[a.priority]
       return 0;
     });
 
@@ -73,12 +80,21 @@ export const App = () => {
         <main className="main-layout">
         <div>
           <p className="color" style={{ marginBottom: "1rem" }}>{t.totalTasks} {tasks.length}</p>
+          <TaskFilters 
+            search={search} 
+            onSearchChange={setSearch} 
+            filter={filter} 
+            onFilterChange={setFilters} 
+            sort={sort} 
+            onSortChange={setSorts} 
+          />
           <TaskList 
             tasks={filteredTasks} 
             onDelete={handleDeleteTask} 
             onToggle={handleToggleTask} 
             onEdit={handleUpdateTask} 
           />
+          <TaskStats tasks={tasks}/>
         </div>
         <aside>
           <AddTask onAdd={handleAddTask} />
